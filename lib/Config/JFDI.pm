@@ -4,6 +4,155 @@ package Config::JFDI;
 use warnings;
 use strict;
 
+use Any::Moose;
+
+use Config::JFDI::Source::Loader;
+
+use Config::Any;
+use Hash::Merge::Simple;
+use Clone qw//;
+
+has package => (
+   is => 'ro',
+);
+
+has source => (
+   is => 'rw',
+   handles => [qw/ driver local_suffix no_env env_lookup path found /],
+);
+
+has load_once => (
+   is => 'ro',
+   default => 1,
+);
+
+has loaded => (
+   is => 'rw',
+   default => 0,
+);
+
+has default => (
+   is => 'ro',
+   lazy_build => '1',
+);
+sub _build_default { {} }
+
+has path_to => (
+   is => 'ro',
+   reader => '_path_to',
+   lazy_build => '1',
+);
+sub _build_path_to {
+    my $self = shift;
+    return $self->config->{home} if $self->config->{home};
+    return $self->source->path unless $self->source->path_is_file;
+    return '.';
+}
+
+has _config => (
+   is => 'rw',
+);
+
+sub BUILD {
+    my $self = shift;
+    my $given = shift;
+
+    my ($source, %source);
+    if ($given->{file}) {
+
+        $given->{path} = $given->{file};
+        $source{path_is_file} = 1;
+    }
+
+    {
+        for (qw/
+            name
+            path
+            driver
+
+            no_local
+            local_suffix
+
+            no_env
+            env_lookup
+
+        /) {
+            $source{$_} = $given->{$_} if exists $given->{$_};
+        }
+
+        warn "Warning, 'local_suffix' will be ignored if 'file' is given, use 'path' instead" if
+            exists $source{local_suffix} && exists $given->{file};
+
+        $source{local_suffix} = $given->{config_local_suffix} if $given->{config_local_suffix};
+
+        $source = Config::JFDI::Source::Loader->new( %source );
+    }
+
+    $self->source($source);
+}
+
+sub open {
+    if ( ! ref $_[0] ) {
+        my $class = shift;
+        return $class->new( no_06_warning => 1, 1 == @_ ? (file => $_[0]) : @_ )->open;
+    }
+    my $self = shift;
+    warn "You called ->open on an instantiated object with arguments" if @_;
+    return unless $self->found;
+    return wantarray ? ($self->get, $self) : $self->get;
+}
+
+sub get {
+    my $self = shift;
+
+    my $config = $self->config;
+    return $config;
+    # TODO Expand to allow dotted key access (?)
+}
+
+sub config {
+    my $self = shift;
+
+    return $self->_config if $self->loaded;
+    return $self->load;
+}
+
+sub load {
+    my $self = shift;
+
+    return $self->get if $self->loaded && $self->load_once;
+
+    $self->_config($self->default);
+
+    $self->_load($_) for $self->source->read;
+
+    $self->loaded(1);
+
+    return $self->config;
+}
+
+sub clone {
+    my $self = shift;
+    return Clone::clone($self->config);
+}
+
+sub reload {
+    my $self = shift;
+    $self->loaded(0);
+    return $self->load;
+}
+
+sub _load {
+    my $self = shift;
+    my $cfg = shift;
+
+    my ($file, $hash) = %$cfg;
+
+    $self->_config(Hash::Merge::Simple->merge($self->_config, $hash));
+}
+
+1;
+
 =head1 SYNPOSIS
 
     use Config::JFDI;
@@ -75,57 +224,6 @@ If you *do* want the original behavior, simply pass in the file parameter as the
 
 =head1 METHODS
 
-=cut
-
-use Any::Moose;
-
-use Config::JFDI::Source::Loader;
-
-use Config::Any;
-use Hash::Merge::Simple;
-use Clone qw//;
-
-has package => (
-   is => 'ro',
-);
-
-has source => (
-   is => 'rw',
-   handles => [qw/ driver local_suffix no_env env_lookup path found /],
-);
-
-has load_once => (
-   is => 'ro',
-   default => 1,
-);
-
-has loaded => (
-   is => 'rw',
-   default => 0,
-);
-
-has default => (
-   is => 'ro',
-   lazy_build => '1',
-);
-sub _build_default { {} }
-
-has path_to => (
-   is => 'ro',
-   reader => '_path_to',
-   lazy_build => '1',
-);
-sub _build_path_to {
-    my $self = shift;
-    return $self->config->{home} if $self->config->{home};
-    return $self->source->path unless $self->source->path_is_file;
-    return '.';
-}
-
-has _config => (
-   is => 'rw',
-);
-
 =head2 $config = Config::JFDI->new(...)
 
 You can configure the $config object by passing the following to new:
@@ -160,46 +258,6 @@ You can configure the $config object by passing the following to new:
 
 Returns a new Config::JFDI object
 
-=cut
-
-sub BUILD {
-    my $self = shift;
-    my $given = shift;
-
-    my ($source, %source);
-    if ($given->{file}) {
-
-        $given->{path} = $given->{file};
-        $source{path_is_file} = 1;
-    }
-
-    {
-        for (qw/
-            name
-            path
-            driver
-
-            no_local
-            local_suffix
-
-            no_env
-            env_lookup
-
-        /) {
-            $source{$_} = $given->{$_} if exists $given->{$_};
-        }
-
-        warn "Warning, 'local_suffix' will be ignored if 'file' is given, use 'path' instead" if
-            exists $source{local_suffix} && exists $given->{file};
-
-        $source{local_suffix} = $given->{config_local_suffix} if $given->{config_local_suffix};
-
-        $source = Config::JFDI::Source::Loader->new( %source );
-    }
-
-    $self->source($source);
-}
-
 =head2 $config_hash = Config::JFDI->open( ... )
 
 As an alternative way to load a config, ->open will pass given arguments to ->new( ... ), then attempt to do ->load
@@ -232,83 +290,17 @@ Returns a list of files found
 
 If the list is empty, then no files were loaded/read
 
-=cut
-
-sub open {
-    if ( ! ref $_[0] ) {
-        my $class = shift;
-        return $class->new( no_06_warning => 1, 1 == @_ ? (file => $_[0]) : @_ )->open;
-    }
-    my $self = shift;
-    warn "You called ->open on an instantiated object with arguments" if @_;
-    return unless $self->found;
-    return wantarray ? ($self->get, $self) : $self->get;
-}
-
-sub get {
-    my $self = shift;
-
-    my $config = $self->config;
-    return $config;
-    # TODO Expand to allow dotted key access (?)
-}
-
-sub config {
-    my $self = shift;
-
-    return $self->_config if $self->loaded;
-    return $self->load;
-}
-
-sub load {
-    my $self = shift;
-
-    return $self->get if $self->loaded && $self->load_once;
-
-    $self->_config($self->default);
-
-    $self->_load($_) for $self->source->read;
-
-    $self->loaded(1);
-
-    return $self->config;
-}
-
 =head2 $config->clone
 
 Return a clone of the configuration hash using L<Clone>
 
 This will load the configuration first, if it hasn't already
 
-=cut
-
-sub clone {
-    my $self = shift;
-    return Clone::clone($self->config);
-}
-
 =head2 $config->reload
 
 Reload the configuration, examining ENV and scanning the path anew
 
 Returns a hash of the configuration
-
-=cut
-
-sub reload {
-    my $self = shift;
-    $self->loaded(0);
-    return $self->load;
-}
-
-sub _load {
-    my $self = shift;
-    my $cfg = shift;
-
-    my ($file, $hash) = %$cfg;
-
-    $self->_config(Hash::Merge::Simple->merge($self->_config, $hash));
-}
 
 =head1 SEE ALSO
 
@@ -324,4 +316,3 @@ L<Config::General>
 
 =cut
 
-1;
