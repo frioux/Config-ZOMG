@@ -84,7 +84,6 @@ use Config::JFDI::Source::Loader;
 use Path::Class;
 use Config::Any;
 use Hash::Merge::Simple;
-use Sub::Install;
 use Data::Visitor::Callback;
 use Clone qw//;
 
@@ -163,10 +162,6 @@ You can configure the $config object by passing the following to new:
     driver              A hash consisting of Config:: driver information. This is passed directly through
                         to Config::Any
 
-    install_accessor    Set this to 1 to install a Catalyst-style accessor as <name>::config
-                        You can also specify the package name directly by setting install_accessor to it
-                        (e.g. install_accessor => "My::Application")
-
     substitute          A hash consisting of subroutines called during the substitution phase of configuration
                         preparation. ("substitutions" will also work so as to be drop-in compatible with C::P::CL)
                         A substitution subroutine has the following signature: ($config, [ $argument1, $argument2, ... ])
@@ -184,7 +179,7 @@ sub BUILD {
     my $self = shift;
     my $given = shift;
 
-    $self->{package} = $given->{name} if defined $given->{name} && ! defined $self->{package} && ! ref $given->{name};
+    #$self->{package} = $given->{name} if defined $given->{name} && ! defined $self->{package} && !ref $given->{name};
 
     my ($source, %source);
     if ($given->{file}) {
@@ -224,18 +219,6 @@ sub BUILD {
             $self->{substitution} = $given->{$_};
             last;
         }
-    }
-
-    if (my $package = $given->{install_accessor}) {
-        $package = $self->package if $package eq 1;
-        Sub::Install::install_sub({
-            code => sub {
-                return $self->config;
-            },
-            into => $package,
-            as => "config"
-        });
-
     }
 }
 
