@@ -4,8 +4,6 @@ use warnings;
 use Test::More;
 use Test::Deep;
 
-plan qw/no_plan/;
-
 use Config::JFDI;
 
 sub has_Config_General {
@@ -46,3 +44,4 @@ sub has_Config_General {
     cmp_deeply( [ $config->found ], bag( 't/assets/some_random_file.pl' ) );
 }
 
+done_testing;

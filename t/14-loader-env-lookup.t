@@ -2,7 +2,6 @@ use strict;
 use warnings;
 
 use Test::More;
-plan qw/no_plan/;
 
 use Config::JFDI;
 
@@ -18,8 +17,6 @@ ok($config->load);
 is($config->load->{'Controller::Foo'}->{foo},       'bar');
 is($config->load->{'Model::Baz'}->{qux},            'xyzzy');
 is($config->load->{'view'},                         'View::TT');
-#is($config->load->{'foo_sub'},                      '__foo(x,y)__' );
-#is($config->load->{'literal_macro'},                '__literal(__DATA__)__');
 is($config->load->{'random'},                        1);
 
 $ENV{XYZZY_CONFIG} = "t/assets/xyzzy.pl";
@@ -34,3 +31,5 @@ is($config->load->{'Model::Baz'}->{another},        'new key');
 is($config->load->{'view'},                         'View::TT::New');
 is($config->load->{'foo_sub'},                      '__foo(x,y)__' );
 is($config->load->{'literal_macro'},                '__literal(__DATA__)__');
+
+done_testing;

@@ -4,8 +4,6 @@ use warnings;
 use Test::More;
 use Test::Warn;
 
-plan qw/no_plan/;
-
 use Config::JFDI;
 
 sub has_Config_General {
@@ -43,3 +41,4 @@ sub has_Config_General {
     ok( $config->isa('Config::JFDI') );
 }
 
+done_testing;

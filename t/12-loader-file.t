@@ -5,8 +5,6 @@ use Test::More;
 use Test::Deep;
 use Test::Warn;
 
-plan qw/no_plan/;
-
 use Config::JFDI;
 
 sub has_Config_General {
@@ -23,8 +21,6 @@ sub has_Config_General {
     is($config->load->{'Model::Baz'}->{qux},            'xyzzy');
     is($config->load->{'view'},                         'View::TT');
     is($config->load->{'random'},                        1);
-    #is($config->load->{'foo_sub'},                      '__foo(x,y)__' );
-    #is($config->load->{'literal_macro'},                '__literal(__DATA__)__');
 }
 
 SKIP: {
@@ -78,3 +74,5 @@ SKIP: {
     cmp_deeply( $config->load, {
     } );
 }
+
+done_testing;

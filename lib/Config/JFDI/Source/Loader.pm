@@ -204,7 +204,6 @@ sub _get_path {
 
     my $name = $self->name;
     my $path;
-#    $path = _env($name, 'CONFIG') if $name && ! $self->no_env;
     $path = $self->_env_lookup('CONFIG') unless $self->no_env;
     $path ||= $self->path;
 
