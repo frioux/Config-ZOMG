@@ -1,7 +1,9 @@
 use strict;
 use warnings;
 
-use Test::Most;
+use Test::More;
+use Test::Deep;
+use Test::Warn;
 
 plan qw/no_plan/;
 
@@ -39,7 +41,7 @@ SKIP: {
         test => 'paths ending with ../',
     } );
 
-    $config = Config::JFDI->new( 
+    $config = Config::JFDI->new(
         path => "t/assets/order/xyzzy.cnf"
     );
     cmp_deeply( $config->get, {

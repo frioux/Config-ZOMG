@@ -1,7 +1,8 @@
 use strict;
 use warnings;
 
-use Test::Most;
+use Test::More;
+use Test::Warn;
 
 plan qw/no_plan/;
 
@@ -40,6 +41,6 @@ sub has_Config_General {
     my ($config_hash, $config) = Config::JFDI->open( qw{ name xyzzy path t/assets } );
     ok( $config_hash );
     is( ref $config_hash, 'HASH' );
-    isa( $config, 'Config::JFDI' );
+    ok( $config->isa('Config::JFDI') );
 }
 

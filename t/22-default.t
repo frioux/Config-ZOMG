@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::Most;
+use Test::More;
 plan qw/no_plan/;
 
 use Config::JFDI;

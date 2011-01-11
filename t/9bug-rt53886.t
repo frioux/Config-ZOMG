@@ -1,7 +1,8 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-use Test::Most;
+use Test::More;
+use Test::Warn;
 
 use Config::JFDI;
 
