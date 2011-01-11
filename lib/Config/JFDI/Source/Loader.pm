@@ -27,20 +27,16 @@ sub _build_driver {
 
 has local_suffix => (
    is => 'ro',
-   required => 1,
-   lazy => 1,
    default => 'local'
 );
 
 has no_env => (
    is => 'ro',
-   required => 1,
    default => 0,
 );
 
 has no_local => (
    is => 'ro',
-   required => 1,
    default => 0,
 );
 

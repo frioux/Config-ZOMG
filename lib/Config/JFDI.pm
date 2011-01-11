@@ -100,13 +100,11 @@ has source => (
 
 has load_once => (
    is => 'ro',
-   required => 1,
    default => 1,
 );
 
 has loaded => (
    is => 'ro',
-   required => 1,
    default => 0,
 );
 
