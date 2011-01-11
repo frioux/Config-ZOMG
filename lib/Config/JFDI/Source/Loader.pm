@@ -5,26 +5,59 @@ use Any::Moose;
 use Config::Any;
 use List::MoreUtils qw/ any /;
 
-has name => qw/ is ro required 0 isa Str|ScalarRef /;
+has name => (
+   is => 'ro',
+   required => 0,
+   isa => 'Str|ScalarRef',
+);
 
-has path => qw/ is ro default . /;
+has path => (
+   is => 'ro',
+   default => '.',
+);
 
-has driver => qw/ is ro lazy_build 1 /;
+has driver => (
+   is => 'ro',
+   lazy_build => 1,
+);
+
 sub _build_driver {
     return {};
 }
 
-has local_suffix => qw/ is ro required 1 lazy 1 default local /;
+has local_suffix => (
+   is => 'ro',
+   required => 1,
+   lazy => 1,
+   default => 'local'
+);
 
-has no_env => qw/ is ro required 1 /, default => 0;
+has no_env => (
+   is => 'ro',
+   required => 1,
+   default => 0,
+);
 
-has no_local => qw/ is ro required 1 /, default => 0;
+has no_local => (
+   is => 'ro',
+   required => 1,
+   default => 0,
+);
 
-has env_lookup => qw/ is ro /, default => sub { [] };
+has env_lookup => (
+   is => 'ro',
+   default => sub { [] },
+);
 
-has path_is_file => qw/ is ro default 0 /;
+has path_is_file => (
+   is => 'ro',
+   default => 0,
+);
 
-has _found => qw/ is rw isa ArrayRef /;
+has _found => (
+   is => 'rw',
+   isa => 'ArrayRef',
+);
 
 sub _env (@) {
     my $key = uc join "_", @_;
