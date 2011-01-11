@@ -81,10 +81,8 @@ use Any::Moose;
 
 use Config::JFDI::Source::Loader;
 
-use Path::Class;
 use Config::Any;
 use Hash::Merge::Simple;
-use Data::Visitor::Callback;
 use Clone qw//;
 
 has package => (
@@ -105,13 +103,6 @@ has loaded => (
    is => 'rw',
    default => 0,
 );
-
-has substitution => (
-   is => 'ro',
-   reader => '_substitution',
-   lazy_build => '1',
-);
-sub _build_substitution { {} }
 
 has default => (
    is => 'ro',
@@ -162,10 +153,6 @@ You can configure the $config object by passing the following to new:
     driver              A hash consisting of Config:: driver information. This is passed directly through
                         to Config::Any
 
-    substitute          A hash consisting of subroutines called during the substitution phase of configuration
-                        preparation. ("substitutions" will also work so as to be drop-in compatible with C::P::CL)
-                        A substitution subroutine has the following signature: ($config, [ $argument1, $argument2, ... ])
-
     path_to             The path to dir to use for the __path_to(...)__ substitution. If nothing is given, then the 'home'
                         config value will be used ($config->get->{home}). Failing that, the current directory will be used.
 
@@ -178,8 +165,6 @@ Returns a new Config::JFDI object
 sub BUILD {
     my $self = shift;
     my $given = shift;
-
-    #$self->{package} = $given->{name} if defined $given->{name} && ! defined $self->{package} && !ref $given->{name};
 
     my ($source, %source);
     if ($given->{file}) {
@@ -286,17 +271,6 @@ sub load {
 
     $self->loaded(1);
 
-    {
-        my $visitor = Data::Visitor::Callback->new(
-            plain_value => sub {
-                return unless defined $_;
-                $self->substitute($_);
-            }
-        );
-        $visitor->visit( $self->config );
-
-    }
-
     return $self->config;
 }
 
@@ -325,59 +299,6 @@ sub reload {
     my $self = shift;
     $self->loaded(0);
     return $self->load;
-}
-
-=head2 $config->substitute( <value>, <value>, ... )
-
-For each given <value>, if <value> looks like a substitution specification, then run
-the substitution macro on <value> and store the result.
-
-There are three default substitutions (the same as L<Catalyst::Plugin::ConfigLoader>)
-
-=over 4
-
-=item * C<__HOME__> - replaced with C<$c-E<gt>path_to('')>
-
-=item * C<__path_to(foo/bar)__> - replaced with C<$c-E<gt>path_to('foo/bar')>
-
-=item * C<__literal(__FOO__)__> - leaves __FOO__ alone (allows you to use
-C<__DATA__> as a config value, for example)
-
-=back
-
-The parameter list is split on comma (C<,>).
-
-You can define your own substitutions by supplying the substitute option to ->new
-
-=cut
-
-sub substitute {
-    my $self = shift;
-
-    my $substitution = $self->_substitution;
-    $substitution->{ HOME }    ||= sub { shift->path_to( '' ); };
-    $substitution->{ path_to } ||= sub { shift->path_to( @_ ); };
-    $substitution->{ literal } ||= sub { return $_[ 1 ]; };
-    my $matcher = join( '|', keys %$substitution );
-
-    for ( @_ ) {
-        s{__($matcher)(?:\((.+?)\))?__}{ $substitution->{ $1 }->( $self, $2 ? split( /,/, $2 ) : () ) }eg;
-    }
-}
-
-sub path_to {
-    my $self = shift;
-    my @path = @_;
-
-    my $path_to = $self->_path_to;
-
-    my $path = Path::Class::Dir->new( $path_to, @path );
-    if ( -d $path ) {
-        return $path;
-    }
-    else {
-        return Path::Class::File->new( $path_to, @path );
-    }
 }
 
 sub _load {
