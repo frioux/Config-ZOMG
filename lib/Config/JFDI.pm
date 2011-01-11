@@ -114,18 +114,14 @@ has substitution => (
    lazy_build => '1',
    isa => 'HashRef',
 );
-sub _build_substitution {
-    return {};
-}
+sub _build_substitution { {} }
 
 has default => (
    is => 'ro',
    lazy_build => '1',
    isa => 'HashRef',
 );
-sub _build_default {
-    return {};
-}
+sub _build_default { {} }
 
 has path_to => (
    is => 'ro',

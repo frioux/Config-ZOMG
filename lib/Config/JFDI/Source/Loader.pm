@@ -21,9 +21,7 @@ has driver => (
    lazy_build => 1,
 );
 
-sub _build_driver {
-    return {};
-}
+sub _build_driver { {} }
 
 has local_suffix => (
    is => 'ro',
