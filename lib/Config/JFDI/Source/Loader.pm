@@ -84,18 +84,11 @@ sub read {
 
 sub found {
     my $self = shift;
+    $self->read unless $self->{_found};
+
     die if @_;
     return @{ $self->_found };
 }
-
-around found => sub {
-    my $inner = shift;
-    my $self = shift;
-
-    $self->read unless $self->{_found};
-
-    return $inner->( $self, @_ );
-};
 
 sub _load_files {
     my $self = shift;
