@@ -8,7 +8,6 @@ use Test::Warn;
 plan qw/no_plan/;
 
 use Config::JFDI;
-use t::Test;
 
 sub has_Config_General {
     return eval "require Config::General;";
