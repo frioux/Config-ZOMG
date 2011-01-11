@@ -6,8 +6,7 @@ use Config::Any;
 use List::MoreUtils qw/ any /;
 
 has name => (
-   is => 'ro',
-   required => 0,
+   is => 'rw',
 );
 
 has path => (
@@ -70,13 +69,11 @@ sub BUILD {
             $name =~ s/::/_/g;
             $name = lc $name;
         }
-        $self->{name} = $name;
+        $self->name($name);
     }
 
-    if (defined $self->env_lookup) {
-        $self->{env_lookup} = [ $self->env_lookup ] unless ref $self->env_lookup eq "ARRAY";
-    }
-
+    $self->{env_lookup} = [ $self->env_lookup ]
+      if defined $self->env_lookup && ref $self->env_lookup ne 'ARRAY';
 }
 
 sub read {
@@ -111,7 +108,6 @@ sub found {
     my $self = shift;
     $self->read unless $self->_found;
 
-    die if @_;
     return @{ $self->_found };
 }
 
@@ -182,15 +178,12 @@ sub _get_local_suffix {
     my $name = $self->name;
     my $suffix;
     $suffix = $self->_env_lookup('CONFIG_LOCAL_SUFFIX') unless $self->no_env;
-#    $suffix = _env($self->name, 'CONFIG_LOCAL_SUFFIX') if $name && ! $self->no_env;
     $suffix ||= $self->local_suffix;
 
     return $suffix;
 }
 
-sub _get_extensions {
-    return @{ Config::Any->extensions }
-}
+sub _get_extensions { @{ Config::Any->extensions } }
 
 sub file_extension ($) {
     my $path = shift;
