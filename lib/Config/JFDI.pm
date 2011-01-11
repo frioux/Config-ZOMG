@@ -285,17 +285,11 @@ sub config {
 sub load {
     my $self = shift;
 
-    if ($self->loaded && $self->load_once) {
-        return $self->get;
-    }
+    return $self->get if $self->loaded && $self->load_once;
 
     $self->_config($self->default);
 
-    {
-        my @read = $self->source->read;
-
-        $self->_load($_) for @read;
-    }
+    $self->_load($_) for $self->source->read;
 
     $self->{loaded} = 1;
 
