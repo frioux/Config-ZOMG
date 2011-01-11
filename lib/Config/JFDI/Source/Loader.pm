@@ -1,6 +1,7 @@
 package Config::JFDI::Source::Loader;
 
-use Any::Moose;
+use Moo;
+use Sub::Quote 'quote_sub';
 
 use Config::Any;
 use List::MoreUtils qw/ any /;
@@ -11,39 +12,37 @@ has name => (
 
 has path => (
    is => 'ro',
-   default => '.',
+   default => quote_sub q{ '.' },
 );
 
 has driver => (
    is => 'ro',
-   lazy_build => 1,
+   default => quote_sub q[ {} ],
 );
-
-sub _build_driver { {} }
 
 has local_suffix => (
    is => 'ro',
-   default => 'local'
+   default => quote_sub q{ 'local' },
 );
 
 has no_env => (
    is => 'ro',
-   default => 0,
+   default => quote_sub q{ 0 },
 );
 
 has no_local => (
    is => 'ro',
-   default => 0,
+   default => quote_sub q{ 0 },
 );
 
 has env_lookup => (
    is => 'ro',
-   default => sub { [] },
+   default => quote_sub q{ [] },
 );
 
 has path_is_file => (
    is => 'ro',
-   default => 0,
+   default => quote_sub q{ 0 },
 );
 
 has _found => (

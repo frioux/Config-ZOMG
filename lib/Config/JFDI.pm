@@ -4,7 +4,8 @@ package Config::JFDI;
 use warnings;
 use strict;
 
-use Any::Moose;
+use Moo;
+use Sub::Quote 'quote_sub';
 
 use Config::JFDI::Source::Loader;
 
@@ -23,25 +24,26 @@ has source => (
 
 has load_once => (
    is => 'ro',
-   default => 1,
+   default => quote_sub q{ 1 },
 );
 
 has loaded => (
    is => 'rw',
-   default => 0,
+   default => quote_sub q{ 0 },
 );
 
 has default => (
    is => 'ro',
-   lazy_build => '1',
+   default => quote_sub q[ {} ],
 );
-sub _build_default { {} }
 
 has path_to => (
    is => 'ro',
    reader => '_path_to',
-   lazy_build => '1',
+   builder => '_build_path_to',
+   lazy => 1,
 );
+
 sub _build_path_to {
     my $self = shift;
     return $self->load->{home} if $self->load->{home};
