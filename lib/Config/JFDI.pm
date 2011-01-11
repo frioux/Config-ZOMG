@@ -155,76 +155,60 @@ sub _load {
 
 =head1 SYNPOSIS
 
-    use Config::JFDI;
+ use Config::JFDI;
 
-    my $config = Config::JFDI->new(name => "my_application", path => "path/to/my/application");
-    my $config_hash = $config->get;
+ my $config = Config::JFDI->new(
+   name => 'my_application',
+   path => 'path/to/my/application',
+ );
+ my $config_hash = $config->get;
 
-This will look for something like (depending on what Config::Any will find):
+This will look for something like (depending on what L<Config::Any> will find):
 
-    path/to/my/application/my_application_local.{yml,yaml,cnf,conf,jsn,json,...} AND
+ path/to/my/application/my_application_local.{yml,yaml,cnf,conf,jsn,json,...}
 
-    path/to/my/application/my_application.{yml,yaml,cnf,conf,jsn,json,...}
+and
 
-... and load the found configuration information appropiately, with _local taking precedence.
+ path/to/my/application/my_application.{yml,yaml,cnf,conf,jsn,json,...}
+
+... and load the found configuration information appropiately, with C<_local>
+taking precedence.
 
 You can also specify a file directly:
 
-    my $config = Config::JFDI->new(file => "/path/to/my/application/my_application.cnf");
+ my $config = Config::JFDI->new(file => '/path/to/my/application/my_application.cnf');
 
-To later reload your configuration, fresh from disk:
+To later reload your configuration:
 
-    $config->reload;
+ $config->reload;
 
 =head1 DESCRIPTION
 
-Config::JFDI is an implementation of L<Catalyst::Plugin::ConfigLoader> that exists outside of L<Catalyst>.
+C<Config::JFDI> is an implementation of L<Catalyst::Plugin::ConfigLoader>
+that exists outside of L<Catalyst>.
 
-Essentially, Config::JFDI will scan a directory for files matching a certain name. If such a file is found which also matches an extension
-that Config::Any can read, then the configuration from that file will be loaded.
+C<Config::JFDI> will scan a directory for files matching a certain name. If
+such a file is found which also matches an extension that L<Config::Any> can
+read, then the configuration from that file will be loaded.
 
-Config::JFDI will also look for special files that end with a "_local" suffix. Files with this special suffix will take
-precedence over any other existing configuration file, if any. The precedence takes place by merging the local configuration with the
-"standard" configuration via L<Hash::Merge::Simple>.
+C<Config::JFDI> will also look for special files that end with a C<_local>
+suffix. Files with this special suffix will take precedence over any other
+existing configuration file, if any. The precedence takes place by merging
+the local configuration with the "standard" configuration via
+L<Hash::Merge::Simple>.
 
-Finally, you can override/modify the path search from outside your application, by setting the <NAME>_CONFIG variable outside your application (where <NAME>
-is the uppercase version of what you passed to Config::JFDI->new).
-
-=head1 Config::Loader
-
-We are currently kicking around ideas for a next-generation configuration loader. The goals are:
-
-    * A universal platform for configuration slurping and post-processing
-    * Use Config::Any to do configuration loading
-    * A sane API so that developers can roll their own loader according to the needs of their application
-    * A friendly interface so that users can have it just DWIM
-    * Host/application/instance specific configuration via _local and %ENV
-
-Find more information and contribute at:
-
-Roadmap: L<http://sites.google.com/site/configloader/>
-
-Mailing list: L<http://lists.scsys.co.uk/cgi-bin/mailman/listinfo/config-loader>
-
-=head1 Behavior change of the 'file' parameter in 0.06
-
-In previous versions, Config::JFDI would treat the file parameter as a path parameter, stripping off the extension (ignoring it) and globbing what remained against all the extensions that Config::Any could provide. That is, it would do this:
-
-    Config::JFDI->new( file => 'xyzzy.cnf' );
-    # Transform 'xyzzy.cnf' into 'xyzzy.pl', 'xyzzy.yaml', 'xyzzy_local.pl', ... (depending on what Config::Any could parse)
-
-This is probably not what people intended. Config::JFDI will now squeak a warning if you pass 'file' through, but you can suppress the warning with 'no_06_warning' or 'quiet_deprecation'
-
-    Config::JFDI->new( file => 'xyzzy.cnf', no_06_warning => 1 );
-    Config::JFDI->new( file => 'xyzzy.cnf', quiet_deprecation => 1 ); # More general
-
-If you *do* want the original behavior, simply pass in the file parameter as the path parameter instead:
-
-    Config::JFDI->new( path => 'xyzzy.cnf' ); # Will work as before
+Finally you can override/modify the path search from outside your application,
+by setting the C<< ${NAME}_CONFIG >> variable outside your application (where
+C<$NAME> is the uppercase version of what you passed to
+L<< Config::JFDI->new|/new >>).
 
 =head1 METHODS
 
-=head2 $config = Config::JFDI->new(...)
+=head2 new
+
+ $config = Config::JFDI->new(...)
+
+Returns a new Config::JFDI object
 
 You can configure the $config object by passing the following to new:
 
@@ -256,47 +240,64 @@ You can configure the $config object by passing the following to new:
 
     default             A hash filled with default keys/values
 
-Returns a new Config::JFDI object
+=head2 open
 
-=head2 $config_hash = Config::JFDI->open( ... )
+ $config_hash = Config::JFDI->open( ... )
 
-As an alternative way to load a config, ->open will pass given arguments to ->new( ... ), then attempt to do ->load
+As an alternative way to load a config C<open> will pass given arguments to
+L</new> then attempt to do L</load>
 
-Unlike ->get or ->load, if no configuration files are found, ->open will return undef (or the empty list)
+Unlike L</get> or L</load> if no configuration files are found C<open> will
+return C<undef> (or the empty list)
 
 This is so you can do something like:
 
-    my $config_hash = Config::JFDI->open( "/path/to/application.cnf" ) or croak "Couldn't find config file!"
+ my $config_hash = Config::JFDI->open( '/path/to/application.cnf' )
+   or die "Couldn't find config file!"
 
-In scalar context, ->open will return the config hash, NOT the config object. If you want the config object, call ->open in list context:
+In scalar context C<open> will return the config hash, B<not> the config
+object. If you want the config object call C<open> in list context:
 
     my ($config_hash, $config) = Config::JFDI->open( ... )
 
-You can pass any arguments to ->open that you would to ->new
+You can pass any arguments to C<open> that you would to L</new>
 
-=head2 $config->get
+=head2 get
 
-=head2 $config->config
+ $config->get
 
-=head2 $config->load
+=head2 config
 
-Load a config as specified by ->new( ... ) and ENV and return a hash
+ $config->config
 
-These will only load the configuration once, so it's safe to call them multiple times without incurring any loading-time penalty
+=head2 load
 
-=head2 $config->found
+ $config->load
+
+Load a config as specified by L</new> and C<ENV> and return a hash
+
+These will only load the configuration once, so it's safe to call them
+multiple times without incurring any loading-time penalty
+
+=head2 found
+
+ $config->found
 
 Returns a list of files found
 
-If the list is empty, then no files were loaded/read
+If the list is empty then no files were loaded/read
 
-=head2 $config->clone
+=head2 clone
+
+ $config->clone
 
 Return a clone of the configuration hash using L<Clone>
 
 This will load the configuration first, if it hasn't already
 
-=head2 $config->reload
+=head2 reload
+
+ $config->reload
 
 Reload the configuration, examining ENV and scanning the path anew
 
