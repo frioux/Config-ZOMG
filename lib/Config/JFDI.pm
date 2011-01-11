@@ -4,7 +4,7 @@ package Config::JFDI;
 use warnings;
 use strict;
 
-=head1 SYNPOSIS 
+=head1 SYNPOSIS
 
     use Config::JFDI;
 
@@ -24,7 +24,7 @@ You can also specify a file directly:
     my $config = Config::JFDI->new(file => "/path/to/my/application/my_application.cnf");
 
 To later reload your configuration, fresh from disk:
-    
+
     $config->reload;
 
 =head1 DESCRIPTION
@@ -80,7 +80,6 @@ If you *do* want the original behavior, simply pass in the file parameter as the
 use Any::Moose;
 
 use Config::JFDI::Source::Loader;
-use Config::JFDI::Carp;
 
 use Path::Class;
 use Config::Any;
@@ -121,7 +120,7 @@ has _config => qw/ is rw isa HashRef /;
 
 You can configure the $config object by passing the following to new:
 
-    name                The name specifying the prefix of the configuration file to look for and 
+    name                The name specifying the prefix of the configuration file to look for and
                         the ENV variable to read. This can be a package name. In any case,
                         :: will be substituted with _ in <name> and the result will be lowercased.
 
@@ -145,7 +144,7 @@ You can configure the $config object by passing the following to new:
                         to Config::Any
 
     install_accessor    Set this to 1 to install a Catalyst-style accessor as <name>::config
-                        You can also specify the package name directly by setting install_accessor to it 
+                        You can also specify the package name directly by setting install_accessor to it
                         (e.g. install_accessor => "My::Application")
 
     substitute          A hash consisting of subroutines called during the substitution phase of configuration
@@ -170,11 +169,6 @@ sub BUILD {
     my ($source, %source);
     if ($given->{file}) {
 
-        if ( 0 ) { # Deprecate the deprecation warning
-            carp "The behavior of the 'file' option has changed, pass in 'quiet_deprecation' or 'no_06_warning' to disable this warning"
-                unless $given->{quiet_deprecation} || $given->{no_06_warning};
-            carp "Warning, overriding path setting with file (\"$given->{file}\" instead of \"$given->{path}\")" if $given->{path};
-        }
         $given->{path} = $given->{file};
         $source{path_is_file} = 1;
     }
@@ -195,7 +189,7 @@ sub BUILD {
             $source{$_} = $given->{$_} if exists $given->{$_};
         }
 
-        carp "Warning, 'local_suffix' will be ignored if 'file' is given, use 'path' instead" if
+        warn "Warning, 'local_suffix' will be ignored if 'file' is given, use 'path' instead" if
             exists $source{local_suffix} && exists $given->{file};
 
         $source{local_suffix} = $given->{config_local_suffix} if $given->{config_local_suffix};
@@ -265,7 +259,7 @@ sub open {
         return $class->new( no_06_warning => 1, 1 == @_ ? (file => $_[0]) : @_ )->open;
     }
     my $self = shift;
-    carp "You called ->open on an instantiated object with arguments" if @_;
+    warn "You called ->open on an instantiated object with arguments" if @_;
     return unless $self->found;
     return wantarray ? ($self->get, $self) : $self->get;
 }
@@ -335,7 +329,7 @@ Reload the configuration, examining ENV and scanning the path anew
 
 Returns a hash of the configuration
 
-=cut 
+=cut
 
 sub reload {
     my $self = shift;

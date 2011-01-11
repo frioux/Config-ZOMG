@@ -3,7 +3,6 @@ package Config::JFDI::Source::Loader;
 use Any::Moose;
 
 use Config::Any;
-use Carp;
 use List::MoreUtils qw/ any /;
 
 has name => qw/ is ro required 0 isa Str|ScalarRef /;
@@ -92,7 +91,7 @@ sub found {
 around found => sub {
     my $inner = shift;
     my $self = shift;
-    
+
     $self->read unless $self->{_found};
 
     return $inner->( $self, @_ );
@@ -122,10 +121,10 @@ sub _find_files { # Doesn't really find files...hurm...
         my $local_suffix = $self->_get_local_suffix;
         my @extensions = $self->_get_extensions;
         my $no_local = $self->no_local;
-        
+
         my @files;
         if ($extension) {
-            croak "Can't handle file extension $extension" unless any { $_ eq $extension } @extensions;
+            die "Can't handle file extension $extension" unless any { $_ eq $extension } @extensions;
             push @files, $path;
             unless ($no_local) {
                 (my $local_path = $path) =~ s{\.$extension$}{_$local_suffix.$extension};
@@ -155,7 +154,7 @@ sub _env_lookup {
         my $value = _env($prefix, @suffix);
         return $value if defined $value;
     }
-    
+
     return;
 }
 
@@ -177,7 +176,7 @@ sub _get_extensions {
 
 sub file_extension ($) {
     my $path = shift;
-    return if -d $path; 
+    return if -d $path;
     my ($extension) = $path =~ m{\.([^/\.]{1,4})$};
     return $extension;
 }
