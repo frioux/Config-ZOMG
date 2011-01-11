@@ -8,7 +8,6 @@ use List::MoreUtils qw/ any /;
 has name => (
    is => 'ro',
    required => 0,
-   isa => 'Str|ScalarRef',
 );
 
 has path => (
@@ -50,7 +49,6 @@ has path_is_file => (
 
 has _found => (
    is => 'rw',
-   isa => 'ArrayRef',
 );
 
 sub _env (@) {

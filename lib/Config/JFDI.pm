@@ -90,7 +90,6 @@ use Clone qw//;
 
 has package => (
    is => 'ro',
-   isa => 'Str',
 );
 
 has source => (
@@ -112,14 +111,12 @@ has substitution => (
    is => 'ro',
    reader => '_substitution',
    lazy_build => '1',
-   isa => 'HashRef',
 );
 sub _build_substitution { {} }
 
 has default => (
    is => 'ro',
    lazy_build => '1',
-   isa => 'HashRef',
 );
 sub _build_default { {} }
 
@@ -127,7 +124,6 @@ has path_to => (
    is => 'ro',
    reader => '_path_to',
    lazy_build => '1',
-   isa => 'Str',
 );
 sub _build_path_to {
     my $self = shift;
@@ -138,7 +134,6 @@ sub _build_path_to {
 
 has _config => (
    is => 'rw',
-   isa => 'HashRef',
 );
 
 =head2 $config = Config::JFDI->new(...)
