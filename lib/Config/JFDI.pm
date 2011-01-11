@@ -109,6 +109,7 @@ has loaded => (
 );
 
 has substitution => (
+   is => 'ro',
    reader => '_substitution',
    lazy_build => '1',
    isa => 'HashRef',
@@ -127,6 +128,7 @@ sub _build_default {
 }
 
 has path_to => (
+   is => 'ro',
    reader => '_path_to',
    lazy_build => '1',
    isa => 'Str',
