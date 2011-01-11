@@ -44,7 +44,7 @@ has path_to => (
 );
 sub _build_path_to {
     my $self = shift;
-    return $self->config->{home} if $self->config->{home};
+    return $self->load->{home} if $self->load->{home};
     return $self->source->path unless $self->source->path_is_file;
     return '.';
 }
@@ -99,28 +99,13 @@ sub open {
     my $self = shift;
     warn "You called ->open on an instantiated object with arguments" if @_;
     return unless $self->found;
-    return wantarray ? ($self->get, $self) : $self->get;
-}
-
-sub get {
-    my $self = shift;
-
-    my $config = $self->config;
-    return $config;
-    # TODO Expand to allow dotted key access (?)
-}
-
-sub config {
-    my $self = shift;
-
-    return $self->_config if $self->loaded;
-    return $self->load;
+    return wantarray ? ($self->load, $self) : $self->load;
 }
 
 sub load {
     my $self = shift;
 
-    return $self->get if $self->loaded && $self->load_once;
+    return $self->_config if $self->loaded && $self->load_once;
 
     $self->_config($self->default);
 
@@ -128,7 +113,7 @@ sub load {
 
     $self->loaded(1);
 
-    return $self->config;
+    return $self->_config;
 }
 
 sub clone {
@@ -161,7 +146,7 @@ sub _load {
    name => 'my_application',
    path => 'path/to/my/application',
  );
- my $config_hash = $config->get;
+ my $config_hash = $config->load;
 
 This will look for something like (depending on what L<Config::Any> will find):
 
@@ -236,7 +221,7 @@ You can configure the $config object by passing the following to new:
                         to Config::Any
 
     path_to             The path to dir to use for the __path_to(...)__ substitution. If nothing is given, then the 'home'
-                        config value will be used ($config->get->{home}). Failing that, the current directory will be used.
+                        config value will be used ($config->load->{home}). Failing that, the current directory will be used.
 
     default             A hash filled with default keys/values
 
@@ -247,8 +232,8 @@ You can configure the $config object by passing the following to new:
 As an alternative way to load a config C<open> will pass given arguments to
 L</new> then attempt to do L</load>
 
-Unlike L</get> or L</load> if no configuration files are found C<open> will
-return C<undef> (or the empty list)
+Unlike L</load> if no configuration files are found C<open> will return
+C<undef> (or the empty list)
 
 This is so you can do something like:
 
@@ -262,22 +247,14 @@ object. If you want the config object call C<open> in list context:
 
 You can pass any arguments to C<open> that you would to L</new>
 
-=head2 get
-
- $config->get
-
-=head2 config
-
- $config->config
-
 =head2 load
 
  $config->load
 
 Load a config as specified by L</new> and C<ENV> and return a hash
 
-These will only load the configuration once, so it's safe to call them
-multiple times without incurring any loading-time penalty
+This will only load the configuration once, so it's safe to call multiple
+times without incurring any loading-time penalty
 
 =head2 found
 

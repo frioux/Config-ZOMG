@@ -10,6 +10,6 @@ use Config::JFDI;
 
 my $config = Config::JFDI->new(qw{ name xyzzy path t/assets/order });
 
-ok($config->get);
-is($config->get->{'last'}, 'local_pl');
-is($config->get->{$_}, 1) for qw/pl perl local_pl local_perl cnf local_cnf conf local_conf/;
+ok($config->load);
+is($config->load->{'last'}, 'local_pl');
+is($config->load->{$_}, 1) for qw/pl perl local_pl local_perl cnf local_cnf conf local_conf/;

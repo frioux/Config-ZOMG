@@ -15,6 +15,6 @@ $config = Config::JFDI->new(
     },
 );
 
-is($config->get->{home}, 'a-galaxy-far-far-away');
-is($config->get->{path_to}, '__path_to(tatooine)__');
-is($config->get->{test}, 'beta');
+is($config->load->{home}, 'a-galaxy-far-far-away');
+is($config->load->{path_to}, '__path_to(tatooine)__');
+is($config->load->{test}, 'beta');
