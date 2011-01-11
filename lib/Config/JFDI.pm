@@ -92,7 +92,7 @@ has package => (
 );
 
 has source => (
-   is => 'ro',
+   is => 'rw',
    handles => [qw/ driver local_suffix no_env env_lookup path found /],
 );
 
@@ -102,7 +102,7 @@ has load_once => (
 );
 
 has loaded => (
-   is => 'ro',
+   is => 'rw',
    default => 0,
 );
 
@@ -212,14 +212,7 @@ sub BUILD {
         $source = Config::JFDI::Source::Loader->new( %source );
     }
 
-    $self->{source} = $source;
-
-    for (qw/substitute substitutes substitutions substitution/) {
-        if ($given->{$_}) {
-            $self->{substitution} = $given->{$_};
-            last;
-        }
-    }
+    $self->source($source);
 }
 
 =head2 $config_hash = Config::JFDI->open( ... )
@@ -291,7 +284,7 @@ sub load {
 
     $self->_load($_) for $self->source->read;
 
-    $self->{loaded} = 1;
+    $self->loaded(1);
 
     {
         my $visitor = Data::Visitor::Callback->new(
@@ -330,7 +323,7 @@ Returns a hash of the configuration
 
 sub reload {
     my $self = shift;
-    $self->{loaded} = 0;
+    $self->loaded(0);
     return $self->load;
 }
 
@@ -393,7 +386,7 @@ sub _load {
 
     my ($file, $hash) = %$cfg;
 
-    $self->{_config} = Hash::Merge::Simple->merge($self->_config, $hash);
+    $self->_config(Hash::Merge::Simple->merge($self->_config, $hash));
 }
 
 =head1 SEE ALSO

@@ -109,7 +109,7 @@ sub read {
 
 sub found {
     my $self = shift;
-    $self->read unless $self->{_found};
+    $self->read unless $self->_found;
 
     die if @_;
     return @{ $self->_found };
