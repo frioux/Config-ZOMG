@@ -1,8 +1,6 @@
 package Config::ZOMG;
-# ABSTRACT: Just * Do it: A Catalyst::Plugin::ConfigLoader-style layer over Config::Any
 
-use warnings;
-use strict;
+# ABSTRACT: Yet Another Catalyst::Plugin::ConfigLoader-style layer over Config::Any
 
 use Moo;
 use Sub::Quote 'quote_sub';
@@ -168,6 +166,9 @@ To later reload your configuration:
 
 =head1 DESCRIPTION
 
+C<Config::ZOMG> is a fork of L<Config::JFDI>.  It removes a couple of unusual
+features and passes the same tests three times faster than L<Config::JFDI>.
+
 C<Config::ZOMG> is an implementation of L<Catalyst::Plugin::ConfigLoader>
 that exists outside of L<Catalyst>.
 
@@ -192,37 +193,55 @@ L<< Config::ZOMG->new|/new >>).
 
  $config = Config::ZOMG->new(...)
 
-Returns a new Config::ZOMG object
+Returns a new C<Config::ZOMG> object
 
-You can configure the $config object by passing the following to new:
+You can configure the C<$config> object by passing the following to new:
 
-    name                The name specifying the prefix of the configuration file to look for and
-                        the ENV variable to read. This can be a package name. In any case,
-                        :: will be substituted with _ in <name> and the result will be lowercased.
+=over 2
 
-                        To prevent modification of <name>, pass it in as a scalar reference.
+=item name
 
-    path                The directory to search in
+The name specifying the prefix of the configuration file to look for and
+the ENV variable to read. This can be a package name. In any case, ::
+will be substituted with _ in C<name> and the result will be lowercased.
+To prevent modification of C<name>, pass it in as a scalar reference.
 
-    file                Directly read the configuration from this file. Config::Any must recognize
-                        the extension. Setting this will override path
+=item C<path>
 
-    no_local            Disable lookup of a local configuration. The 'local_suffix' option will be ignored. Off by default
+The directory to search in
 
-    local_suffix        The suffix to match when looking for a local configuration. "local" By default
-                        ("config_local_suffix" will also work so as to be drop-in compatible with C::P::CL)
+=item C<file>
 
-    no_env              Set this to 1 to disregard anything in the ENV. The 'env_lookup' option will be ignored. Off by default
+Directly read the configuration from this file. C<Config::Any> must recognize
+the extension. Setting this will override C<path>
 
-    env_lookup          Additional ENV to check if $ENV{<NAME>...} is not found
+=item C<no_local>
 
-    driver              A hash consisting of Config:: driver information. This is passed directly through
-                        to Config::Any
+Disable lookup of a local configuration. The C<local_suffix> option will be
+ignored. Off by default
 
-    path_to             The path to dir to use for the __path_to(...)__ substitution. If nothing is given, then the 'home'
-                        config value will be used ($config->load->{home}). Failing that, the current directory will be used.
+=item C<local_suffix>
 
-    default             A hash filled with default keys/values
+The suffix to match when looking for a local configuration. C<local> by default
+
+=item C<no_env>
+
+Set this to ignore ENV. C<env_lookup> will be ignored. Off by default
+
+=item C<env_lookup>
+
+Additional ENV to check if C<< $ENV{<NAME>...} >> is not found
+
+=item C<driver>
+
+A hash consisting of C<Config::> driver information. This is passed directly
+through to C<Config::Any>
+
+=item C<default>
+
+A hash filled with default keys/values
+
+=back
 
 =head2 open
 
@@ -280,6 +299,8 @@ Reload the configuration, examining ENV and scanning the path anew
 Returns a hash of the configuration
 
 =head1 SEE ALSO
+
+L<Config::JFDI>
 
 L<Catalyst::Plugin::ConfigLoader>
 
