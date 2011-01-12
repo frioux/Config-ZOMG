@@ -91,9 +91,9 @@ sub BUILD {
 }
 
 sub open {
-    if ( ! ref $_[0] ) {
+    unless ( ref $_[0] ) {
         my $class = shift;
-        return $class->new( no_06_warning => 1, 1 == @_ ? (file => $_[0]) : @_ )->open;
+        return $class->new( @_ == 1 ? (file => $_[0]) : @_ )->open;
     }
     my $self = shift;
     warn "You called ->open on an instantiated object with arguments" if @_;
