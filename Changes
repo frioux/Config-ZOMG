@@ -8,3 +8,4 @@ Revision history for {{$dist->name}}
   - Remove install_accessor feature
   - Remove substitute feature
   - Switch to Moo
+  - No longer support config_local_suffix

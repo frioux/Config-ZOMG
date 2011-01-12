@@ -84,8 +84,6 @@ sub BUILD {
         warn "Warning, 'local_suffix' will be ignored if 'file' is given, use 'path' instead" if
             exists $source{local_suffix} && exists $given->{file};
 
-        $source{local_suffix} = $given->{config_local_suffix} if $given->{config_local_suffix};
-
         $source = Config::ZOMG::Source::Loader->new( %source );
     }
 
