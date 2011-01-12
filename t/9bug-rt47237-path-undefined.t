@@ -4,9 +4,9 @@ use warnings;
 use Test::More;
 use Test::Warn;
 
-use Config::JFDI;
+use Config::ZOMG;
 
-my $config = Config::JFDI->new( name => '' );
+my $config = Config::ZOMG->new( name => '' );
 warning_is { $config->_path_to } undef;
 
 done_testing;

@@ -4,10 +4,10 @@ use warnings;
 use Test::More;
 plan qw/no_plan/;
 
-use Config::JFDI;
+use Config::ZOMG;
 my $config;
 
-$config = Config::JFDI->new(
+$config = Config::ZOMG->new(
     qw{ name default path t/assets },
     default => {
         home => 'a-galaxy-far-far-away',

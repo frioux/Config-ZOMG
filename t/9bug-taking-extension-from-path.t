@@ -3,9 +3,9 @@ use strict;
 use warnings;
 use Test::More;
 
-use Config::JFDI::Source::Loader;
+use Config::ZOMG::Source::Loader;
 
-sub file_extension ($) { Config::JFDI::Source::Loader::file_extension shift }
+sub file_extension ($) { Config::ZOMG::Source::Loader::file_extension shift }
 
 is( file_extension 'test.conf', 'conf' );
 is( file_extension '...', undef );

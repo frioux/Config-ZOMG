@@ -1,4 +1,4 @@
-package Config::JFDI::Source::Loader;
+package Config::ZOMG::Source::Loader;
 
 use Moo;
 use Sub::Quote 'quote_sub';

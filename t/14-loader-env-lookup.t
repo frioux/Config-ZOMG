@@ -3,7 +3,7 @@ use warnings;
 
 use Test::More;
 
-use Config::JFDI;
+use Config::ZOMG;
 
 eval {
     delete $ENV{$_} for qw/CATALYST_CONFIG_LOCAL_SUFFIX/;
@@ -11,7 +11,7 @@ eval {
 
 $ENV{CATALYST_CONFIG} = "t/assets/some_random_file.pl";
 
-my $config = Config::JFDI->new(qw{ name xyzzy path t/assets env_lookup CATALYST });
+my $config = Config::ZOMG->new(qw{ name xyzzy path t/assets env_lookup CATALYST });
 
 ok($config->load);
 is($config->load->{'Controller::Foo'}->{foo},       'bar');
@@ -21,7 +21,7 @@ is($config->load->{'random'},                        1);
 
 $ENV{XYZZY_CONFIG} = "t/assets/xyzzy.pl";
 
-$config = Config::JFDI->new(qw{ name xyzzy path t/assets }, env_lookup => [qw/CATALYST/]);
+$config = Config::ZOMG->new(qw{ name xyzzy path t/assets }, env_lookup => [qw/CATALYST/]);
 
 ok($config->load);
 is($config->load->{'Controller::Foo'}->{foo},       'bar');

@@ -3,11 +3,11 @@ use warnings;
 
 use Test::More;
 
-use Config::JFDI;
+use Config::ZOMG;
 
 $ENV{XYZZY_CONFIG} = "t/assets/some_random_file.pl";
 
-my $config = Config::JFDI->new(qw{ name xyzzy path t/assets });
+my $config = Config::ZOMG->new(qw{ name xyzzy path t/assets });
 
 ok($config->load);
 is($config->load->{'Controller::Foo'}->{foo},       'bar');

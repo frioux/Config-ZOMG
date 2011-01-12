@@ -5,14 +5,14 @@ use Test::More;
 use Test::Deep;
 use Test::Warn;
 
-use Config::JFDI;
+use Config::ZOMG;
 
 sub has_Config_General {
     return eval "require Config::General;";
 }
 
 {
-    my $config = Config::JFDI->new(
+    my $config = Config::ZOMG->new(
         file => "t/assets/some_random_file.pl"
     );
 
@@ -27,7 +27,7 @@ SKIP: {
     skip 'Config::General required' unless has_Config_General;
     my $config;
 
-    $config = Config::JFDI->new(
+    $config = Config::ZOMG->new(
         path => "t/assets/order/../",
         name => "dotdot",
     );
@@ -36,7 +36,7 @@ SKIP: {
         test => 'paths ending with ../',
     } );
 
-    $config = Config::JFDI->new(
+    $config = Config::ZOMG->new(
         path => "t/assets/order/xyzzy.cnf"
     );
     cmp_deeply( $config->load, {
@@ -45,7 +45,7 @@ SKIP: {
         local_cnf => 1,
     } );
 
-    $config = Config::JFDI->new(
+    $config = Config::ZOMG->new(
         file => "t/assets/order/xyzzy.cnf"
     );
     cmp_deeply( $config->load, {
@@ -53,7 +53,7 @@ SKIP: {
         last => 'cnf',
     } );
 
-    $config = Config::JFDI->new(
+    $config = Config::ZOMG->new(
         path => "t/assets/order/xyzzy.cnf",
         no_local => 1
     );
@@ -62,13 +62,13 @@ SKIP: {
         last => 'cnf',
     } );
 
-    warning_is { $config = Config::JFDI->new( file => "t/assets/order/xyzzy.cnf", ) } undef;
+    warning_is { $config = Config::ZOMG->new( file => "t/assets/order/xyzzy.cnf", ) } undef;
 
-    warning_is { $config = Config::JFDI->new( file => "t/assets/order/xyzzy.cnf", no_06_warning => 1 ) } '';
+    warning_is { $config = Config::ZOMG->new( file => "t/assets/order/xyzzy.cnf", no_06_warning => 1 ) } '';
 
-    warning_is { $config = Config::JFDI->new( file => "t/assets/order/xyzzy.cnf", quiet_deprecation => 1 ) } '';
+    warning_is { $config = Config::ZOMG->new( file => "t/assets/order/xyzzy.cnf", quiet_deprecation => 1 ) } '';
 
-    $config = Config::JFDI->new(
+    $config = Config::ZOMG->new(
         file => "t/assets/file-does-not-exist.cnf"
     );
     cmp_deeply( $config->load, {

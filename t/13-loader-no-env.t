@@ -3,11 +3,11 @@ use warnings;
 
 use Test::More;
 
-use Config::JFDI;
+use Config::ZOMG;
 
 $ENV{XYZZY_CONFIG} = "t/assets/some_non_existent_file.pl";
 
-my $config = Config::JFDI->new(qw{ name xyzzy path t/assets no_env 1 });
+my $config = Config::ZOMG->new(qw{ name xyzzy path t/assets no_env 1 });
 
 ok($config->load);
 is($config->load->{'Controller::Foo'}->{foo},       'bar');

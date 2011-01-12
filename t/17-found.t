@@ -4,14 +4,14 @@ use warnings;
 use Test::More;
 use Test::Deep;
 
-use Config::JFDI;
+use Config::ZOMG;
 
 sub has_Config_General {
     return eval "require Config::General;";
 }
 
 {
-    my $config = Config::JFDI->new( file => 't/assets/some_random_file.pl', quiet_deprecation => 1 );
+    my $config = Config::ZOMG->new( file => 't/assets/some_random_file.pl', quiet_deprecation => 1 );
 
     ok( $config->load );
     ok( keys %{ $config->load } );
@@ -20,7 +20,7 @@ sub has_Config_General {
 }
 
 {
-    my $config = Config::JFDI->new( qw{ name xyzzy path t/assets } );
+    my $config = Config::ZOMG->new( qw{ name xyzzy path t/assets } );
     ok( $config->load );
     ok( keys %{ $config->load } );
     ok( $config->found );
@@ -28,7 +28,7 @@ sub has_Config_General {
 }
 
 {
-    my $config = Config::JFDI->new( file => 't/assets/missing-file.pl', quiet_deprecation => 1 );
+    my $config = Config::ZOMG->new( file => 't/assets/missing-file.pl', quiet_deprecation => 1 );
 
     ok( $config->load );
     cmp_deeply( $config->load, {} );
@@ -36,7 +36,7 @@ sub has_Config_General {
 }
 
 {
-    my $config = Config::JFDI->new( file => 't/assets/some_random_file.pl', quiet_deprecation => 1 );
+    my $config = Config::ZOMG->new( file => 't/assets/some_random_file.pl', quiet_deprecation => 1 );
 
     ok( $config->found ); # Do ->read via ->found
     ok( $config->load );

@@ -1,4 +1,4 @@
-package Config::JFDI;
+package Config::ZOMG;
 # ABSTRACT: Just * Do it: A Catalyst::Plugin::ConfigLoader-style layer over Config::Any
 
 use warnings;
@@ -7,7 +7,7 @@ use strict;
 use Moo;
 use Sub::Quote 'quote_sub';
 
-use Config::JFDI::Source::Loader;
+use Config::ZOMG::Source::Loader;
 
 use Config::Any;
 use Hash::Merge::Simple;
@@ -87,7 +87,7 @@ sub BUILD {
 
         $source{local_suffix} = $given->{config_local_suffix} if $given->{config_local_suffix};
 
-        $source = Config::JFDI::Source::Loader->new( %source );
+        $source = Config::ZOMG::Source::Loader->new( %source );
     }
 
     $self->source($source);
@@ -142,9 +142,9 @@ sub _load {
 
 =head1 SYNPOSIS
 
- use Config::JFDI;
+ use Config::ZOMG;
 
- my $config = Config::JFDI->new(
+ my $config = Config::ZOMG->new(
    name => 'my_application',
    path => 'path/to/my/application',
  );
@@ -163,7 +163,7 @@ taking precedence.
 
 You can also specify a file directly:
 
- my $config = Config::JFDI->new(file => '/path/to/my/application/my_application.cnf');
+ my $config = Config::ZOMG->new(file => '/path/to/my/application/my_application.cnf');
 
 To later reload your configuration:
 
@@ -171,14 +171,14 @@ To later reload your configuration:
 
 =head1 DESCRIPTION
 
-C<Config::JFDI> is an implementation of L<Catalyst::Plugin::ConfigLoader>
+C<Config::ZOMG> is an implementation of L<Catalyst::Plugin::ConfigLoader>
 that exists outside of L<Catalyst>.
 
-C<Config::JFDI> will scan a directory for files matching a certain name. If
+C<Config::ZOMG> will scan a directory for files matching a certain name. If
 such a file is found which also matches an extension that L<Config::Any> can
 read, then the configuration from that file will be loaded.
 
-C<Config::JFDI> will also look for special files that end with a C<_local>
+C<Config::ZOMG> will also look for special files that end with a C<_local>
 suffix. Files with this special suffix will take precedence over any other
 existing configuration file, if any. The precedence takes place by merging
 the local configuration with the "standard" configuration via
@@ -187,15 +187,15 @@ L<Hash::Merge::Simple>.
 Finally you can override/modify the path search from outside your application,
 by setting the C<< ${NAME}_CONFIG >> variable outside your application (where
 C<$NAME> is the uppercase version of what you passed to
-L<< Config::JFDI->new|/new >>).
+L<< Config::ZOMG->new|/new >>).
 
 =head1 METHODS
 
 =head2 new
 
- $config = Config::JFDI->new(...)
+ $config = Config::ZOMG->new(...)
 
-Returns a new Config::JFDI object
+Returns a new Config::ZOMG object
 
 You can configure the $config object by passing the following to new:
 
@@ -229,7 +229,7 @@ You can configure the $config object by passing the following to new:
 
 =head2 open
 
- $config_hash = Config::JFDI->open( ... )
+ $config_hash = Config::ZOMG->open( ... )
 
 As an alternative way to load a config C<open> will pass given arguments to
 L</new> then attempt to do L</load>
@@ -239,13 +239,13 @@ C<undef> (or the empty list)
 
 This is so you can do something like:
 
- my $config_hash = Config::JFDI->open( '/path/to/application.cnf' )
+ my $config_hash = Config::ZOMG->open( '/path/to/application.cnf' )
    or die "Couldn't find config file!"
 
 In scalar context C<open> will return the config hash, B<not> the config
 object. If you want the config object call C<open> in list context:
 
-    my ($config_hash, $config) = Config::JFDI->open( ... )
+    my ($config_hash, $config) = Config::ZOMG->open( ... )
 
 You can pass any arguments to C<open> that you would to L</new>
 
