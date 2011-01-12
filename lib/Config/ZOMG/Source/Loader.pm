@@ -124,8 +124,7 @@ sub _find_files { # Doesn't really find files...hurm...
     my $self = shift;
 
     if ($self->path_is_file) {
-        my $path;
-        $path = $self->_env_lookup('CONFIG') unless $self->no_env;
+        my $path = $self->_env_lookup('CONFIG') unless $self->no_env;
         $path ||= $self->path;
         return ($path);
     }
