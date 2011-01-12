@@ -4,7 +4,7 @@ use Moo;
 use Sub::Quote 'quote_sub';
 
 use Config::Any;
-use List::MoreUtils qw/ any /;
+use List::Util 'first';
 
 has name => (
    is => 'rw',
@@ -136,7 +136,7 @@ sub _find_files { # Doesn't really find files...hurm...
 
         my @files;
         if ($extension) {
-            die "Can't handle file extension $extension" unless any { $_ eq $extension } @extensions;
+            die "Can't handle file extension $extension" unless first { $_ eq $extension } @extensions;
             push @files, $path;
             unless ($no_local) {
                 (my $local_path = $path) =~ s{\.$extension$}{_$local_suffix.$extension};
