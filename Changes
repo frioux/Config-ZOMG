@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.001000  2011-01-11 22:16:52 CST6CDT
   - Initial fork of Config::JFDI
   - Stop using carp, people can use Carp::Always if they need it
   - lots and lots of cleanup for more idiomatic Moose code
