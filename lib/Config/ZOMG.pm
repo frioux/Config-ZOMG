@@ -11,7 +11,6 @@ use Config::ZOMG::Source::Loader;
 
 use Config::Any;
 use Hash::Merge::Simple;
-use Clone qw//;
 
 has package => (
    is => 'ro',
@@ -119,8 +118,8 @@ sub load {
 }
 
 sub clone {
-    my $self = shift;
-    return Clone::clone($self->config);
+   require Clone;
+   Clone::clone($_[0]->config)
 }
 
 sub reload {
