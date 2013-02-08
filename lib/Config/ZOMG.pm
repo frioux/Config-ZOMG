@@ -16,7 +16,7 @@ has package => (
 
 has source => (
    is => 'rw',
-   handles => [qw/ driver local_suffix no_env env_lookup path found /],
+   handles => [qw/ driver local_suffix no_env env_lookup path found find /],
 );
 
 has load_once => (
@@ -281,6 +281,13 @@ times without incurring any loading-time penalty
 Returns a list of files found
 
 If the list is empty then no files were loaded/read
+
+=head2 find
+
+  $config->find
+
+Returns a list of files that configuration will be loaded from. Use this method
+to check whether configuration files have changed, without actually reloading.
 
 =head2 clone
 
