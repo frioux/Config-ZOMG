@@ -21,6 +21,7 @@ sub has_Config_General {
 
 {
     my $config = Config::ZOMG->new( qw{ name xyzzy path t/assets } );
+    cmp_deeply( [ $config->find ], bag( 't/assets/xyzzy.pl', 't/assets/xyzzy_local.pl' ) );
     ok( $config->load );
     ok( keys %{ $config->load } );
     ok( $config->found );

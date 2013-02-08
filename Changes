@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - add find method for searching for files again (Jakob Voss)
 
 0.001000  2011-01-11 22:16:52 CST6CDT
   - Initial fork of Config::JFDI
