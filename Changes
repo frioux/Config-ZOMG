@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.002000  2013-04-04 18:55:29 CST6CDT
   - add find method for searching for files again (Jakob Voss)
 
 0.001000  2011-01-11 22:16:52 CST6CDT
