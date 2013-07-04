@@ -95,8 +95,9 @@ sub open {
     }
     my $self = shift;
     warn "You called ->open on an instantiated object with arguments" if @_;
+    my $config_hash = $self->load;
     return unless $self->found;
-    return wantarray ? ($self->load, $self) : $self->load;
+    return wantarray ? ($config_hash, $self) : $config_hash;
 }
 
 sub load {

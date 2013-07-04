@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Make ->found not trigger a call to ->read (Jakob Voss)
+    !!! Note that the above change could break your code, if you depended on it
+    (though that seems unlikely) !!!
 
 0.002000  2013-04-04 18:55:29 CST6CDT
   - add find method for searching for files again (Jakob Voss)
