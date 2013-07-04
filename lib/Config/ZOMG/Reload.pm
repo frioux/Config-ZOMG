@@ -42,7 +42,7 @@ has 'checked' => ( is => 'rw' );
 has 'md5' => ( is => 'rw' );
 
 has '_found' => ( is => 'rw', default => quote_sub q{ [ ] } );
-has '_zomg' => ( is => 'rw' );
+has '_zomg' => ( is => 'rw', handles => [qw(find)] );
 
 =head1 METHODS
 
@@ -112,6 +112,10 @@ Timestamp of last time the files were loaded or checked.
 =head2 md5
 
 MD5 hash value based on files that have been found, their modification times and sizes.
+
+=head2 find
+
+A list of files that would be loaded.
 
 =head2 found
 

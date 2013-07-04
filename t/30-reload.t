@@ -38,6 +38,7 @@ create($inifile, "doz = bar");
 is($config->load->{doz}, "bar");
 ok(!$config->error, 'error fixed');
 
+is_deeply( [$config->find], [$config->found] );
 
 sub create {
     open my $fh, '>', shift;
