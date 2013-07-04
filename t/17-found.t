@@ -39,7 +39,7 @@ sub has_Config_General {
 {
     my $config = Config::ZOMG->new( file => 't/assets/some_random_file.pl', quiet_deprecation => 1 );
 
-    ok( $config->found ); # Do ->read via ->found
+    ok( !$config->found ); # Don't do ->read via ->found
     ok( $config->load );
     ok( keys %{ $config->load } );
     cmp_deeply( [ $config->found ], bag( 't/assets/some_random_file.pl' ) );
