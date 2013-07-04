@@ -2,8 +2,12 @@ package Config::ZOMG::Reload;
 #ABSTRACT: Configuration files via Config::ZOMG, reloaded on changes
 
 use v5.14;
-use Config::ZOMG 0.002000;
-use Digest::MD5 qw(md5);
+
+use Moo;
+use Sub::Quote 'quote_sub';
+
+use Config::ZOMG; # requires 0.002000;
+use Digest::MD5 qw(md5_hex);
 use Try::Tiny;
 
 =head1 SYNOPSIS
@@ -26,6 +30,20 @@ reloaded on file changes (based on file names and last modification time).
 
 This package is highly experimental!
 
+=cut
+
+has 'wait'  => (
+    is => 'rw',
+    default => quote_sub q{ 60 },
+);
+
+has 'error' => ( is => 'rw' );
+has 'checked' => ( is => 'rw' );
+has 'md5' => ( is => 'rw' );
+
+has '_found' => ( is => 'rw', default => quote_sub q{ [ ] } );
+has '_zomg' => ( is => 'rw' );
+
 =head1 METHODS
 
 =head2 new( %arguments )
@@ -35,13 +53,14 @@ checks with argument 'delay'.
 
 =cut
 
-sub new {
-    my ($class, %args) = @_;
+sub BUILD {
+    my $self = shift;
+    my $given = shift;
 
-    bless {
-        wait  => delete $args{delay} // 60,
-        zomg  => Config::ZOMG->new( %args ),
-    }, $class;
+    # don't pass to Config::ZOMG
+    delete $given->{$_} for qw(wait error checked zomg);
+
+    $self->_zomg( Config::ZOMG->new($given) );
 }
 
 =head2 load
@@ -52,61 +71,62 @@ Get the configuration hash, possibly (re)loading configuration files.
 
 sub load {
     my $self = shift;
-    my $zomg = $self->{zomg};
+    my $zomg = $self->_zomg;
 
     if ($zomg->loaded) {
-        if (time < $self->{checked} + $self->{wait}) {
-            return ( $self->{error} ? { } : $zomg->load );
-        } elsif ($self->{md5} != $self->_md5( $zomg->find )) {
+        if (time < $self->checked + $self->wait) {
+            return ( $self->error ? { } : $zomg->load );
+        } elsif ($self->md5 ne $self->_md5( $zomg->find )) {
             $zomg->loaded(0);
         }
     }
 
+    $self->checked(time);
+
     try {
         if (!$zomg->loaded) {
-            $self->{error} = undef;
+            $self->error(undef);
             $zomg->load;
         }
         # save files to prevent Config::ZOMG::Source::Loader::read
-        $self->{found} = [ $zomg->found ];
-        $self->{md5} = $self->_md5( @{ $self->{found} } );
+        $self->_found([ $zomg->found ]);
+        $self->md5( $self->_md5( $self->found ) );
     } catch {
-        $self->{error} = $_;
-        $self->{md5} = $self->_md5();
-        $self->{found} = [ ];
+        $self->error($_);
+        $self->md5( $self->_md5() );
+        $self->_found([ ]);
         return { };
     };
 
-    $self->{checked} = time;
-
-    return ( $self->{error} ? { } : $zomg->load );
+    return ( $self->error ? { } : $zomg->load );
 }
+
+=head wait
+
+Number of seconds to wait between checking. Set to 60 by default.
 
 =head checked
 
-Returns a timestamp of last time the files were loaded or checked.
+Timestamp of last time the files were loaded or checked.
 
-=cut
+=head2 md5
 
-sub checked {
-    $_[0]->{checked};
-}
+MD5 hash value based on files that have been found, their modification times and sizes.
 
 =head2 found
 
-Returns a list of files found. In contrast to Config::ZOMG, calling this method
+A list of files found. In contrast to Config::ZOMG, calling this method
 never triggers a load.
 
 =cut
 
 sub found {
-    $_[0]->{found} ? @{ $_[0]->{found} } : ();
+    @{ $_[0]->_found };
 }
 
-# calculate MD5 based on file names and last modify time
 sub _md5 {
     my $self = shift;
-    md5( map { ($_, (stat($_))[9]) } sort @_ );
+    md5_hex( map { my @s = stat($_); ($_, $s[9], $s[7]) } sort @_ );
 }
 
 1;
