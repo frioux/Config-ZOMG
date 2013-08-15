@@ -105,9 +105,7 @@ sub read {
 
 sub found {
     my $self = shift;
-    $self->read unless $self->_found;
-
-    return @{ $self->_found };
+    return ( $self->_found ? @{ $self->_found } : () );
 }
 
 sub find {
