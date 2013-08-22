@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.000000  2013-08-22 17:55:17 CST6CDT
   - Make ->found not trigger a call to ->read (Jakob Voss)
     !!! Note that the above change could break your code, if you depended on it
     (though that seems unlikely) !!!
