@@ -167,7 +167,7 @@ To later reload your configuration:
 
 =head1 DESCRIPTION
 
-C<Config::ZOMG> is a fork of L<Config::JFDI>.  It removes a couple of unusual
+C<Config::ZOMG> is a fork of L<Config::JFDI>.  It removes the substitution
 features and passes the same tests three times faster than L<Config::JFDI>.
 
 C<Config::ZOMG> is an implementation of L<Catalyst::Plugin::ConfigLoader>
